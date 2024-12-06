@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: multi-repo-customers
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: 'https://github.com/chrisf-aarnet/mock-customers.git'
+        revision: main
+        directories:
+          - path: customers/* # Loops over each customer directory
+  template:
+    metadata:
+      name: '{{path.basename}}-app' # Use the directory name as part of the app name
+    spec:
+      project: default
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: default
+      sources:
+        - repoURL: 'https://github.com/chrisf-aarnet/mock-detections.git'
+          path: charts/eng-helm
+          targetRevision: HEAD
+          helm:
+            valueFiles:
+              - $values/{{path}}/values.yaml # Dynamically reference the customer-specific values.yaml
+        - repoURL: 'https://github.com/chrisf-aarnet/mock-customers.git'
+          targetRevision: main
+          ref: values
