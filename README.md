@@ -14,3 +14,10 @@ When iterating you can delete using the following:
 kubectl delete -n argocd -f ArgoApplicationMultiRepo.yaml
 ```
 
+## ApplicationSet
+
+I just let ChatGPT do the Application -> ApplicationSet rewrite. It works, not sure if it is 100% typical way of templating.
+
+```shell
+kubectl apply -n argocd -f ArgoApplicationSetMultiRepo.yaml
+```
